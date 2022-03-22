@@ -25,10 +25,10 @@ module.exports = key => {
       ((data[i4 + 1] & 0xff) << 8) +
       ((data[i4 + 2] & 0xff) << 16) +
       ((data[i4 + 3] & 0xff) << 24)
-    k *= M
+    k = Math.imul(k, M)
     k ^= k >>> R
-    k *= M
-    h *= M
+    k = Math.imul(k, M)
+    h = Math.imul(h, M)
     h ^= k
   }
 
@@ -40,11 +40,11 @@ module.exports = key => {
       h ^= (data[(length & ~3) + 1] & 0xff) << 8
     case 1:
       h ^= data[length & ~3] & 0xff
-      h *= M
+      h = Math.imul(h, M)
   }
 
   h ^= h >>> 13
-  h *= M
+  h = Math.imul(h, M)
   h ^= h >>> 15
 
   return h
