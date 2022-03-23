@@ -1,8 +1,10 @@
 const { MemberMetadata, MemberAssignment } = require('../../assignerProtocol')
-const flatten = require('../../../utils/flatten')
+const getTopicPartitions = require('./getTopicPartitions')
 
 /**
  * RoundRobinAssigner
+ * @param {object} opts
+ * @param {import('../../../../types').Cluster} opts.cluster
  * @type {import('types').PartitionAssigner}
  */
 module.exports = ({ cluster }) => ({
@@ -42,11 +44,7 @@ module.exports = ({ cluster }) => ({
     const sortedMembers = members.map(({ memberId }) => memberId).sort()
     const assignment = {}
 
-    const topicsPartionArrays = topics.map(topic => {
-      const partitionMetadata = cluster.findTopicPartitionMetadata(topic)
-      return partitionMetadata.map(m => ({ topic: topic, partitionId: m.partitionId }))
-    })
-    const topicsPartitions = flatten(topicsPartionArrays)
+    const topicsPartitions = getTopicPartitions(topics, cluster)
 
     topicsPartitions.forEach((topicPartition, i) => {
       const assignee = sortedMembers[i % membersCount]
